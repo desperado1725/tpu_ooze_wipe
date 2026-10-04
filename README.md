@@ -1,43 +1,43 @@
 # TPU ooze wipe for Bambu Lab H2D
 
-A Bambu Studio postprocessing script that adds TPU wipes on the existing prime tower before an eligible nozzle switch.
+Give TPU time to ooze over the prime tower before switching to the other nozzle. This Python script runs automatically through Bambu Studio after slicing.
 
-**[Download the ready-to-use ZIP](tpu_ooze_wipe.zip?raw=true)** · **[Windows setup instructions](START_HERE.txt)**
+**[Download the ZIP](tpu_ooze_wipe.zip?raw=true)** · **[Step-by-step Windows setup](START_HERE.txt)**
 
-## What it does
+## How it works
 
-- Adds 10 zigzag strokes over the prime tower, alternating in Y and progressing in X.
-- Uses approximately 10 seconds of commanded wiping motion, with 0.1% extrusion.
-- Requests a 200°C TPU nozzle target as wiping begins. It **does not wait** for the nozzle to reach 200°C.
-- Returns to the previous position and restores motion settings before the original G-code continues.
+Before switching away from TPU, the nozzle moves to the existing prime tower and makes 10 zigzag wiping strokes over approximately 10 seconds. The strokes alternate in Y while progressing across the tower in X, using a very small extrusion amount (0.1%).
 
-This is the **wipe-only** edition. It preserves every original G-code line. It does not change PLA-on-TPU print speeds, remove existing retractions, limit repeated retractions, or reroute model travel. The inserted routine has its own matched retract/refeed moves for travel to and from the tower.
+The script sets the TPU nozzle target to **200°C when wiping begins**. Cooling and wiping happen together; it does not wait for the nozzle to reach 200°C. After wiping, the original print sequence and temperature commands continue.
+
+Wipes are added at nozzle switches, not on every layer. If TPU prints several consecutive layers, it wipes when switching away from TPU. A prime tower must exist at the outgoing TPU layer height for a wipe to be added.
 
 ## Requirements
 
-- Bambu Lab H2D, developed with TPU on the right/nozzle 2 and PLA on the left/nozzle 1.
-- Dual-nozzle, by-layer printing with an actual prime tower and TPU identified as TPU in the filament profile.
-- Python 3.10 or newer. No additional Python packages are required.
+- **Bambu Lab H2D.** Developed with TPU on the right/nozzle 2 and PLA on the left/nozzle 1.
+- A dual-nozzle project, **Print sequence: By layer**, and an enabled, printed prime tower.
+- A filament profile identified as **TPU**.
+- **Python 3.10 or newer** on your computer. No additional Python packages are needed.
 
-The prime-tower paths used to determine its footprint must be planar straight-line extrusion. Arc fitting and scarf seams elsewhere are not automatically incompatible. A suitable prime tower must exist at the outgoing TPU height; otherwise that wipe is skipped.
+The prime-tower extrusion must use planar, straight-line moves. Arc fitting and scarf seams elsewhere in the model may remain enabled.
 
-## Install
+## Setup
 
-1. Download the ZIP above and use **Extract All** into a permanent folder.
-2. Follow **[START_HERE.txt](START_HERE.txt)** to install Python if needed.
-3. Run `setup_command.py` with Python. It creates `BAMBU_COMMAND.txt` with the correct command for your computer.
-4. Paste that whole command into Bambu Studio's **Process → Others → Post-processing Scripts** field (Advanced mode).
-5. Save a separate process preset and re-slice your original project.
+1. Download the ZIP and extract it into a permanent folder.
+2. Follow [START_HERE.txt](START_HERE.txt) to install Python if needed and run `setup_command.py`.
+3. Copy the generated command from `BAMBU_COMMAND.txt` into Bambu Studio: **Process → Others → Post-processing Scripts**, with Advanced mode enabled.
+4. Save a separate process preset and slice your project.
+5. Check the processed preview and try a small supervised print with your filament.
 
-Do not paste the Python script into a machine G-code field. Do not add the G-code filename to the command; Bambu Studio supplies it. Avoid adding the script twice or combining it with another version of this same wipe routine.
+The generated command contains the paths to Python and the script. Keep both sets of quotes. Bambu Studio supplies the G-code filename automatically. Regenerate the command if you move the script folder or change your Python installation.
 
-To disable it, remove the command and re-slice the original project. Removing the command does not undo a previously modified export.
+To turn it off, remove the command from the process preset and re-slice your project. Previously exported G-code retains its wipes.
 
-## Scope
+## Troubleshooting
 
-This is an unofficial, user-developed script, not a Bambu Lab product. The fixed 200°C cooldown and wiping behavior need testing with your filament and printer setup. Start with a small supervised test. It is an oozing workaround, not a proven cure for extrusion-force errors or clogs.
+See [START_HERE.txt](START_HERE.txt) for installation errors and missing wipes. The preview can make the strokes difficult to see because they use very little extrusion.
 
-Normal sliced temperature commands continue after the inserted routine. No printer credentials, firmware modification, or network connection are required by the script.
+This is a community-developed script. Test the fixed 200°C cooldown with your filament and printer setup before a long print.
 
 ## Optional command-line use
 
@@ -46,4 +46,4 @@ python tpu_ooze_wipe.py input.gcode --output output.gcode
 python tpu_ooze_wipe.py input.gcode.3mf --output output.gcode.3mf
 ```
 
-Plain G-code is modified in place if `--output` is omitted. A 3MF archive requires a different output path. Optional `--report report.json` saves a report. Run `--help` for details.
+Plain G-code is modified in place if `--output` is omitted. A 3MF archive requires a different output path. Use `--report report.json` to save a report, or `--help` to view the available options.

@@ -1,0 +1,98 @@
+﻿TPU OOZE WIPE — BEGINNER SETUP FOR WINDOWS
+Shared snapshot: October 3, 2026
+
+WHAT THIS DOES
+Bambu Studio normally creates the printer instructions (G-code). This small
+program edits those instructions after slicing. It runs on your PC, not on
+the printer. You do not need to write code or change printer firmware.
+
+Before switching away from a TPU hotend, it wipes the nozzle 10 times on the existing prime tower, allowing time for oozing to stop before switching extruder.
+
+BEFORE YOU START
+This version was developed for the Bambu Lab H2D, with TPU on nozzle 2/right
+and PLA on nozzle 1/left, using normal H2D nozzle mapping. It is not a general
+script for every Bambu printer. 
+
+1. EXTRACT THE FILES
+Right-click the ZIP and choose Extract All. Move the extracted folder to a
+permanent location, for example:
+  C:\BambuScripts\tpu_ooze_wipe
+Keep these files together:
+  tpu_ooze_wipe.py      (standalone program Bambu runs)
+  setup_command.py           (one-time setup aid)
+  START_HERE.txt             (this guide)
+Do not run from inside the ZIP. The wipe program needs no helper modules.
+
+2. INSTALL PYTHON IF NEEDED
+Go to the official Windows downloads page:
+  https://www.python.org/downloads/windows/
+Install the recommended Python install manager and follow its setup prompts
+to install a Python runtime. Python 3.10 or newer is required. If using a
+traditional Python installer, enable Add Python to PATH when offered.
+No pip packages or separate virtual environment are required for this script.
+
+Open a NEW Windows Terminal or Command Prompt from the Start menu. Enter:
+  python --version
+It should display Python 3.10 or newer. If python is not found, try:
+  py --version
+If only py works, use py instead of python in the next step. If neither works,
+finish the Python installation and reopen Terminal. Official help:
+  https://docs.python.org/3/using/windows.html
+
+3. GENERATE YOUR OWN COMMAND
+In Terminal, enter this, adjusting the folder if you chose another location:
+  python "C:\BambuScripts\tpu_ooze_wipe\setup_command.py"
+This checks that Python can load the script. It prints a line containing
+TWO quoted paths and saves that line in BAMBU_COMMAND.txt in the same folder.
+Open BAMBU_COMMAND.txt in Notepad and copy the entire line.
+
+The line will look like this (example only; do not copy these placeholders):
+  "C:\your-python-folder\python.exe" "C:\BambuScripts\tpu_ooze_wipe\tpu_ooze_wipe.py"
+The first path is YOUR Python executable. The second is the wipe script.
+Keep both sets of quotes. Do not use another person's Python path.
+
+4. ADD IT TO BAMBU STUDIO
+Open the original project in the Prepare tab. In the Process settings, enable
+Advanced mode. Under Others, find Post-processing Scripts. You can also use
+the settings search to search for post-processing.
+Paste the complete generated command into that field. 
+
+If other postprocessors are already present, do not erase them accidentally.
+Studio uses semicolons between script commands. Get advice before combining
+scripts that alter the same movements. Do not add this script twice.
+
+Save as a NEW process preset, such as H2D TPU ooze wipe, so your ordinary
+preset remains available. Keep the script folder in its permanent location.
+Moving the folder or reinstalling Python requires regenerating the command.
+
+5. SLICE AND CHECK
+Slice the original project again. Let postprocessing finish. If Studio shows
+an error, resolve it before printing. 
+
+COMMON PROBLEMS
+Win32 error 193 / Failed starting script:
+  Usually the entry contains only the .py path. Use BOTH quoted paths from
+  BAMBU_COMMAND.txt, with Python first.
+No module named tpu_ooze_wipe:
+  Keep setup_command.py and tpu_ooze_wipe.py in the same folder.
+Python or file not found:
+  Check the actual installation/folder paths; rerun setup_command.py.
+Disable arc fitting / arc or sloped deposition unsupported:
+  Turn off Arc fitting and scarf seams, then slice again.
+Re-slice original project / already processed input:
+  Return to the original model project. Do not stack this over an old ooze
+  tower script or try to reprocess old modified G-code to change its behavior.
+No wipes visible:
+  Confirm a dual-nozzle TPU print with an actual prime tower. Wipes are added
+  at eligible outgoing TPU switches, not every layer; a TPU nozzle may print
+  consecutive layers without switching. 
+
+SOURCES FOR SETUP
+Python installation:
+  https://docs.python.org/3/using/windows.html
+Bambu Studio's postprocessor setting definition (advanced setting, script
+arguments and semicolon-separated commands):
+  https://github.com/bambulab/BambuStudio/blob/master/src/libslic3r/PrintConfig.cpp
+
+This guide is for Windows. Other systems need their own Python executable
+path; 

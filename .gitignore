@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+BAMBU_COMMAND.txt
+*.gcode
+*.3mf
+*.log

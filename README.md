@@ -8,11 +8,15 @@ Give TPU time to ooze over the prime tower before switching to the other nozzle.
 
 ## How it works
 
-Before switching away from TPU, the nozzle moves to the existing prime tower and makes 10 zigzag wiping strokes over approximately 10 seconds. The strokes alternate in Y while progressing across the tower in X, using a very small extrusion amount (0.1%).
+Before switching away from TPU, the nozzle moves to the existing prime tower and makes 10 zigzag wiping strokes over approximately 15 seconds. The strokes alternate in Y while progressing across the tower in X, using a very small extrusion amount (0.1%).
 
 The script sets the TPU nozzle target to **200Â°C when wiping begins**. Cooling and wiping happen together; it does not wait for the nozzle to reach 200Â°C. After wiping, the original print sequence and temperature commands continue.
 
 Wipes are added at nozzle switches, not on every layer. If TPU prints several consecutive layers, it wipes when switching away from TPU. A prime tower must exist at the outgoing TPU layer height for a wipe to be added.
+
+## Tower handling update
+
+PLA also receives a 2-second wipe before switching away. Wipe cores support horizontal and vertical raster strokes in ribbed towers. Explicit upward moves near the tower are relocated 3 mm outside its complete outline before lifting; original endpoints and feed rates are restored. Firmware-internal motion is unchanged. Re-slice original projects to use this update.
 
 ## Requirements
 
